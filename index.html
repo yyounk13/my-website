@@ -458,6 +458,34 @@
   }
   .lang-option:hover { background:var(--gray-50); color:var(--teal); }
   .lang-option.active { color:var(--teal); background:rgba(13,148,136,0.06); }
+
+  /* ── PHOTO CAROUSEL ── */
+  .photo-carousel-section { background:var(--navy); overflow:hidden; position:relative; }
+  .carousel-label {
+    text-align:center; padding:32px 5% 16px;
+    font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--teal-light); font-weight:700;
+  }
+  .carousel-track-wrap { overflow:hidden; position:relative; width:100%; }
+  .carousel-track { display:flex; transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); will-change:transform; }
+  .carousel-slide { flex:0 0 100%; min-width:100%; height:480px; position:relative; background:#0f2d4a; }
+  @media(max-width:768px){ .carousel-slide{ height:240px; } }
+  .carousel-slide img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+  .carousel-slide .slide-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(10,22,40,0.5) 0%,transparent 50%); }
+  .carousel-btn {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:48px; height:48px; border-radius:50%;
+    background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3);
+    color:white; font-size:20px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s; z-index:10; backdrop-filter:blur(8px);
+  }
+  .carousel-btn:hover { background:rgba(13,148,136,0.6); border-color:var(--teal-light); }
+  .carousel-btn.prev { left:20px; }
+  .carousel-btn.next { right:20px; }
+  .carousel-dots { display:flex; justify-content:center; gap:8px; padding:18px 5% 32px; background:var(--navy); }
+  .carousel-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.25); cursor:pointer; transition:all 0.2s; border:none; }
+  .carousel-dot.active { background:var(--teal-light); width:24px; border-radius:4px; }
 </style>
 </head>
 <body>
@@ -556,6 +584,61 @@
   </div>
 </section>
 
+<!-- PHOTO CAROUSEL -->
+<div class="photo-carousel-section">
+  <div class="carousel-label">
+    <span class="lang-en">📸 Last Season · International Conference, Mexico 2025</span>
+    <span class="lang-zh">📸 上一季活動紀實 · 墨西哥國際會議 2025</span>
+    <span class="lang-cn">📸 上一季活动纪实 · 墨西哥国际会议 2025</span>
+  </div>
+  <div class="carousel-track-wrap" id="carouselWrap">
+    <div class="carousel-track" id="carouselTrack">
+      <div class="carousel-slide">
+        <!-- 🖼️ 圖片1: 1600×900px, 放到 image/cret17.jpg -->
+        <img src="image/cret17.jpg" alt="Conference photo 1">
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="carousel-slide">
+        <!-- 🖼️ 圖片2: image/cret18.jpg -->
+        <img src="image/cret18.jpg" alt="Conference photo 2">
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="carousel-slide">
+        <!-- 🖼️ 圖片3: image/cret19.jpg -->
+        <img src="image/cret19.jpg" alt="Conference photo 3">
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="carousel-slide">
+        <!-- 🖼️ 圖片4: image/cret20.jpg -->
+        <img src="image/cret20.jpg" alt="Conference photo 4">
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="carousel-slide">
+        <!-- 🖼️ 圖片5: image/cret21.jpg -->
+        <img src="image/cret21.jpg" alt="Conference photo 5">
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="carousel-slide">
+        <!-- 🖼️ 圖片6: image/cret22.jpg -->
+        <img src="image/cret22.jpg" alt="Conference photo 6">
+        <div class="slide-overlay"></div>
+      </div>
+    </div>
+    <button class="carousel-btn prev" onclick="carouselMove(-1)">←</button>
+    <button class="carousel-btn next" onclick="carouselMove(1)">→</button>
+  </div>
+  <div class="carousel-dots">
+    <button class="carousel-dot active" onclick="carouselGo(0)"></button>
+    <button class="carousel-dot" onclick="carouselGo(1)"></button>
+    <button class="carousel-dot" onclick="carouselGo(2)"></button>
+    <button class="carousel-dot" onclick="carouselGo(3)"></button>
+    <button class="carousel-dot" onclick="carouselGo(4)"></button>
+    <button class="carousel-dot" onclick="carouselGo(5)"></button>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
 <!-- HOW IT WORKS -->
 <section id="how" style="background:var(--white)">
   <div class="container">
@@ -603,38 +686,72 @@
         <h2 class="section-title"><span class="lang-en">Junior Explorer<br>Program</span><span class="lang-zh">青年學者<br>探索計畫</span><span class="lang-cn">青年学者<br>探索计划</span></h2>
       </div>
       <div style="padding-top:8px">
-        <p class="section-desc"><span class="lang-en">Using Problem-Based Learning (PBL) methodology, each phase builds on the last — guiding students from their very first idea all the way to international conference presentation, with a dedicated 1:1 mentor by their side.</span><span class="lang-zh">採用問題導向學習（PBL）方法，每個階段環環相扣，在一對一導師陪伴下，從最初的構想走向國際會議發表。</span><span class="lang-cn">采用问题导向学习（PBL）方法，每个阶段环环相扣，在一对一导师陪伴下，从最初的构想走向国际会议发表。</span></p>
+        <p class="section-desc"><span class="lang-en">Using the DDMTS methodology, each phase builds on the last — guiding students from their very first idea all the way to international conference presentation, with a dedicated 1:1 mentor by their side.</span><span class="lang-zh">採用DDMTS教學架構，每個階段環環相扣，在一對一導師陪伴下，從最初的構想走向國際會議發表。</span><span class="lang-cn">采用DDMTS教学架构，每个阶段环环相扣，在一对一导师陪伴下，从最初的构想走向国际会议发表。</span></p>
       </div>
     </div>
-    <div class="timeline-wrap">
+        <div class="timeline-wrap">
       <div class="timeline-line"></div>
+
       <div class="timeline-item">
-        <div class="timeline-dot">WEEK<br>1–4</div>
+        <div class="timeline-dot">Month<br>1</div>
         <div class="timeline-body">
-          <div class="tl-week"><span class="lang-en">Month 1 · Weeks 1–4</span><span class="lang-zh">第一個月 · 第1–4週</span></div>
+          <div class="tl-week"><span class="lang-en">Month 1</span><span class="lang-zh">第一個月</span><span class="lang-cn">第一个月</span></div>
           <div class="tl-title"><span class="lang-en">Idea Generation</span><span class="lang-zh">創意激發</span><span class="lang-cn">创意激发</span></div>
           <div class="tl-sub"><span class="lang-en">Explore different topics with your 1:1 mentor</span><span class="lang-zh">與一對一導師探索不同研究主題</span><span class="lang-cn">与一对一导师探索不同研究主题</span></div>
           <div class="tl-desc"><span class="lang-en">Discover suitable research topics through collaborative approaches and creative thinking frameworks. Move from brainstorming to a clear, actionable research plan.</span><span class="lang-zh">透過協作方式和創意思考框架發現合適的研究主題，從腦力激盪走向清晰可執行的研究計畫。</span><span class="lang-cn">通过协作方式和创意思考框架发现合适的研究主题，从头脑风暴走向清晰可执行的研究计划。</span></div>
         </div>
       </div>
+
       <div class="timeline-item">
-        <div class="timeline-dot">WEEK<br>5–6</div>
+        <div class="timeline-dot">Month<br>2</div>
         <div class="timeline-body">
-          <div class="tl-week"><span class="lang-en">Month 2 · Weeks 5–6</span><span class="lang-zh">第二個月 · 第5–6週</span></div>
+          <div class="tl-week"><span class="lang-en">Month 2</span><span class="lang-zh">第二個月</span><span class="lang-cn">第二个月</span></div>
           <div class="tl-title"><span class="lang-en">Synopsis / Introduction</span><span class="lang-zh">提綱撰寫</span><span class="lang-cn">提纲撰写</span></div>
           <div class="tl-sub"><span class="lang-en">Explore different topics with your 1:1 mentor</span><span class="lang-zh">與一對一導師探索不同研究主題</span><span class="lang-cn">与一对一导师探索不同研究主题</span></div>
           <div class="tl-desc"><span class="lang-en">Learn to write a concise synopsis that communicates research focus, significance, and intended outcomes clearly to international reviewers.</span><span class="lang-zh">學習撰寫簡明摘要，向國際審稿人清楚傳達研究重點、意義和預期成果。</span><span class="lang-cn">学习撰写简明摘要，向国际审稿人清楚传达研究重点、意义和预期成果。</span></div>
         </div>
       </div>
+
       <div class="timeline-item">
-        <div class="timeline-dot">WEEK<br>7–8</div>
+        <div class="timeline-dot">Month<br>3</div>
         <div class="timeline-body">
-          <div class="tl-week"><span class="lang-en">Month 3 · Weeks 7–8</span><span class="lang-zh">第三個月 · 第7–8週</span></div>
+          <div class="tl-week"><span class="lang-en">Month 3</span><span class="lang-zh">第三個月</span><span class="lang-cn">第三个月</span></div>
           <div class="tl-title"><span class="lang-en">Literature Review</span><span class="lang-zh">文獻回顧</span><span class="lang-cn">文献回顾</span></div>
           <div class="tl-sub"><span class="lang-en">Explore different topics with your 1:1 mentor</span><span class="lang-zh">與一對一導師探索不同研究主題</span><span class="lang-cn">与一对一导师探索不同研究主题</span></div>
           <div class="tl-desc"><span class="lang-en">Survey existing research and key studies. Establish the theoretical foundation for your paper and identify the gap your work addresses in current academic discourse.</span><span class="lang-zh">梳理現有研究，建立論文理論基礎，確認您的研究在學術討論中所填補的空白。</span><span class="lang-cn">梳理现有研究，建立论文理论基础，确认您的研究在学术讨论中所填补的空白。</span></div>
         </div>
       </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">Month<br>4</div>
+        <div class="timeline-body">
+          <div class="tl-week"><span class="lang-en">Month 4</span><span class="lang-zh">第四個月</span><span class="lang-cn">第四个月</span></div>
+          <div class="tl-title"><span class="lang-en">Experiment / Data Collection</span><span class="lang-zh">實驗與數據收集</span><span class="lang-cn">实验与数据收集</span></div>
+          <div class="tl-sub"><span class="lang-en">Explore different topics with your 1:1 mentor</span><span class="lang-zh">與一對一導師探索不同研究主題</span><span class="lang-cn">与一对一导师探索不同研究主题</span></div>
+          <div class="tl-desc"><span class="lang-en">Design your research methodology and collect data using techniques that ensure validity and reliability, aligned with your study's objectives.</span><span class="lang-zh">設計研究方法並收集數據，確保效度與信度，與研究目標保持一致。</span><span class="lang-cn">设计研究方法并收集数据，确保效度与信度，与研究目标保持一致。</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">Month<br>5</div>
+        <div class="timeline-body">
+          <div class="tl-week"><span class="lang-en">Month 5</span><span class="lang-zh">第五個月</span><span class="lang-cn">第五个月</span></div>
+          <div class="tl-title"><span class="lang-en">Result Analysis / Conclusion</span><span class="lang-zh">分析與結論</span><span class="lang-cn">分析与结论</span></div>
+          <div class="tl-sub"><span class="lang-en">Explore different topics with your 1:1 mentor</span><span class="lang-zh">與一對一導師探索不同研究主題</span><span class="lang-cn">与一对一导师探索不同研究主题</span></div>
+          <div class="tl-desc"><span class="lang-en">Interpret your findings, highlight key patterns and implications, and present evidence-based conclusions that address your research questions.</span><span class="lang-zh">解讀研究發現，突顯關鍵模式與意涵，提出有根據的結論以回答研究問題。</span><span class="lang-cn">解读研究发现，突显关键模式与意涵，提出有根据的结论以回答研究问题。</span></div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">Month<br>6</div>
+        <div class="timeline-body">
+          <div class="tl-week"><span class="lang-en">Month 6</span><span class="lang-zh">第六個月</span><span class="lang-cn">第六个月</span></div>
+          <div class="tl-title"><span class="lang-en">Preparation of Conference</span><span class="lang-zh">國際發表準備</span><span class="lang-cn">国际发表准备</span></div>
+          <div class="tl-sub"><span class="lang-en">Explore different topics with your 1:1 mentor</span><span class="lang-zh">與一對一導師探索不同研究主題</span><span class="lang-cn">与一对一导师探索不同研究主题</span></div>
+          <div class="tl-desc"><span class="lang-en">Consolidate findings for international presentation. Generate your researcher identity, align to the conference template, and respond to feedback from international peer reviewers.</span><span class="lang-zh">整合研究成果，建立研究者身份，配合會議格式，回應國際同儕審稿人的反饋。</span><span class="lang-cn">整合研究成果，建立研究者身份，配合会议格式，回应国际同行评审人的反馈。</span></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -1113,14 +1230,6 @@
   let currentLang = 'en';
   const langLabels = { en:'🌐 EN ▾', zh:'🌐 繁中 ▾', cn:'🌐 简中 ▾' };
 
-  document.getElementById('langBtn').addEventListener('click', function(e){
-    e.stopPropagation();
-    document.querySelector('.lang-dropdown').classList.toggle('open');
-  });
-  document.addEventListener('click', function(){
-    const dd = document.querySelector('.lang-dropdown');
-    if(dd) dd.classList.remove('open');
-  });
   function setLang(lang) {
     document.querySelector('.lang-dropdown').classList.remove('open');
     document.body.classList.remove('zh','cn');
@@ -1196,6 +1305,40 @@
   window.addEventListener('scroll', () => {
     document.getElementById('mainNav').classList.toggle('scrolled', scrollY>40);
   });
+
+  // ── LANG DROPDOWN click fix ──
+  (function(){
+    const btn = document.getElementById('langBtn');
+    const dd  = document.querySelector('.lang-dropdown');
+    if(!btn || !dd) return;
+    btn.addEventListener('click', function(e){ e.stopPropagation(); dd.classList.toggle('open'); });
+    dd.addEventListener('click', function(e){ e.stopPropagation(); });
+    document.addEventListener('click', function(){ dd.classList.remove('open'); });
+    document.addEventListener('touchstart', function(e){
+      if(!btn.contains(e.target) && !dd.contains(e.target)) dd.classList.remove('open');
+    }, {passive:true});
+  })();
+
+  /* ── CAROUSEL JS ── */
+  (function(){
+    let cur = 0, total = 6, timer;
+    function update(){
+      const t = document.getElementById('carouselTrack');
+      if(t) t.style.transform = 'translateX(-'+(cur*100)+'%)';
+      document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===cur));
+    }
+    window.carouselGo = function(i){ cur=(i+total)%total; update(); reset(); };
+    window.carouselMove = function(d){ carouselGo(cur+d); };
+    function reset(){ clearInterval(timer); timer=setInterval(()=>carouselGo(cur+1),4000); }
+    const w = document.getElementById('carouselWrap');
+    if(w){
+      let sx=0;
+      w.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+      w.addEventListener('touchend',e=>{const d=sx-e.changedTouches[0].clientX;if(Math.abs(d)>50)carouselMove(d>0?1:-1);});
+    }
+    reset();
+  })();
+
 </script>
 </body>
 </html>
