@@ -466,12 +466,44 @@
     font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
     color:var(--teal-light); font-weight:700;
   }
-  .carousel-track-wrap { overflow:hidden; position:relative; width:100%; }
-  .carousel-track { display:flex; transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); will-change:transform; }
-  .carousel-slide { flex:0 0 100%; min-width:100%; height:480px; position:relative; background:#0f2d4a; }
-  @media(max-width:768px){ .carousel-slide{ height:240px; } }
-  .carousel-slide img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
-  .carousel-slide .slide-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(10,22,40,0.5) 0%,transparent 50%); }
+  /* outer clips the sides */
+  .carousel-outer {
+    overflow:hidden;
+    padding:0 160px;
+    box-sizing:border-box;
+  }
+  @media(max-width:768px){ .carousel-outer{ padding:0 56px; } }
+  .carousel-track-wrap { overflow:visible; position:relative; width:100%; }
+  .carousel-track { 
+    display:flex; gap:20px;
+    transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); 
+    will-change:transform; 
+  }
+  .carousel-slide { 
+    flex:0 0 100%; min-width:100%;
+    position:relative; background:#0f2d4a;
+    border-radius:16px; overflow:hidden;
+  }
+  .carousel-slide img { width:100%; height:auto; display:block; }
+  .carousel-slide .slide-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(10,22,40,0.4) 0%,transparent 60%); }
+  .carousel-btn {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:44px; height:44px; border-radius:50%;
+    background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3);
+    color:white; font-size:18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s; z-index:10; backdrop-filter:blur(8px);
+  }
+  .carousel-btn:hover { background:rgba(13,148,136,0.6); border-color:var(--teal-light); }
+  .carousel-btn.prev { left:-130px; }
+  .carousel-btn.next { right:-130px; }
+  @media(max-width:768px){
+    .carousel-btn.prev { left:-40px; }
+    .carousel-btn.next { right:-40px; }
+  }
+  .carousel-dots { display:flex; justify-content:center; gap:8px; padding:18px 5% 32px; background:var(--navy); }
+  .carousel-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.25); cursor:pointer; transition:all 0.2s; border:none; }
+  .carousel-dot.active { background:var(--teal-light); width:24px; border-radius:4px; }
   .carousel-btn {
     position:absolute; top:50%; transform:translateY(-50%);
     width:48px; height:48px; border-radius:50%;
@@ -591,6 +623,7 @@
     <span class="lang-zh">📸 上一季活動紀實 · 墨西哥國際會議 2025</span>
     <span class="lang-cn">📸 上一季活动纪实 · 墨西哥国际会议 2025</span>
   </div>
+  <div class="carousel-outer">
   <div class="carousel-track-wrap" id="carouselWrap">
     <div class="carousel-track" id="carouselTrack">
       <div class="carousel-slide">
@@ -626,6 +659,7 @@
     </div>
     <button class="carousel-btn prev" onclick="carouselMove(-1)">←</button>
     <button class="carousel-btn next" onclick="carouselMove(1)">→</button>
+  </div>
   </div>
   <div class="carousel-dots">
     <button class="carousel-dot active" onclick="carouselGo(0)"></button>
@@ -1319,23 +1353,76 @@
     }, {passive:true});
   })();
 
-  /* ── CAROUSEL JS ── */
+  /* ── CAROUSEL JS — infinite loop with clones ── */
   (function(){
-    let cur = 0, total = 6, timer;
-    function update(){
-      const t = document.getElementById('carouselTrack');
-      if(t) t.style.transform = 'translateX(-'+(cur*100)+'%)';
+    const track = document.getElementById('carouselTrack');
+    const wrap  = document.getElementById('carouselWrap');
+    if(!track) return;
+
+    const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+    const total  = slides.length; // 6
+    let cur = 0, timer, isTransitioning = false;
+
+    // Clone first and last slides for infinite effect
+    const firstClone = slides[0].cloneNode(true);
+    const lastClone  = slides[total-1].cloneNode(true);
+    track.appendChild(firstClone);
+    track.insertBefore(lastClone, slides[0]);
+    // Now track has: [lastClone, 0,1,2,3,4,5, firstClone]
+    // Real slides start at index 1
+
+    function allSlides(){ return track.querySelectorAll('.carousel-slide'); }
+    function slideW(){
+      const s = allSlides()[0];
+      return s ? s.offsetWidth + 20 : 0;
+    }
+    function goTo(idx, animate){
+      if(!animate) track.style.transition = 'none';
+      else track.style.transition = 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)';
+      // idx 0 = real first slide = position 1 in cloned array
+      track.style.transform = 'translateX(-' + ((idx + 1) * slideW()) + 'px)';
+    }
+    function updateDots(){
       document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===cur));
     }
-    window.carouselGo = function(i){ cur=(i+total)%total; update(); reset(); };
-    window.carouselMove = function(d){ carouselGo(cur+d); };
-    function reset(){ clearInterval(timer); timer=setInterval(()=>carouselGo(cur+1),4000); }
-    const w = document.getElementById('carouselWrap');
-    if(w){
-      let sx=0;
-      w.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
-      w.addEventListener('touchend',e=>{const d=sx-e.changedTouches[0].clientX;if(Math.abs(d)>50)carouselMove(d>0?1:-1);});
+
+    // Init: go to first real slide without animation
+    goTo(0, false);
+    updateDots();
+
+    track.addEventListener('transitionend', () => {
+      // If we're past the last real slide, jump to first
+      if(cur >= total){ cur = 0; goTo(0, false); }
+      // If we're before the first real slide, jump to last
+      if(cur < 0){ cur = total-1; goTo(total-1, false); }
+      isTransitioning = false;
+    });
+
+    window.carouselGo = function(idx){
+      if(isTransitioning) return;
+      isTransitioning = true;
+      cur = idx;
+      goTo(cur, true);
+      // Handle wrap in updateDots with modulo
+      document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===((cur%total+total)%total)));
+      reset();
+    };
+    window.carouselMove = function(d){ carouselGo(cur + d); };
+
+    function reset(){ clearInterval(timer); timer = setInterval(() => carouselGo(cur+1), 4000); }
+
+    window.addEventListener('resize', () => goTo(cur, false));
+
+    // Touch swipe
+    if(wrap){
+      let sx = 0;
+      wrap.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, {passive:true});
+      wrap.addEventListener('touchend', e => {
+        const d = sx - e.changedTouches[0].clientX;
+        if(Math.abs(d) > 50) carouselMove(d > 0 ? 1 : -1);
+      });
     }
+
     reset();
   })();
 
