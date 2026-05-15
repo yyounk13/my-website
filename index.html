@@ -483,9 +483,9 @@
     flex:0 0 100%; min-width:100%;
     position:relative; background:#0f2d4a;
     border-radius:16px; overflow:hidden;
-    max-height:420px;
+    height:425px;
   }
-  @media(max-width:768px){ .carousel-slide{ max-height:220px; } }
+  @media(max-width:768px){ .carousel-slide{ height:auto; aspect-ratio:800/425; } }
   .carousel-slide img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
   .carousel-slide .slide-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(10,22,40,0.4) 0%,transparent 60%); }
   .carousel-btn {
