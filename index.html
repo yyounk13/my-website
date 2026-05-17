@@ -466,30 +466,41 @@
     font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
     color:var(--teal-light); font-weight:700;
   }
-  /* outer clips the sides */
+  /* outer clips the sides, no big padding now since slides are fixed-width and centered */
   .carousel-outer {
     overflow:hidden;
-    padding:0 160px;
+    padding:0;
     box-sizing:border-box;
   }
-  @media(max-width:768px){ .carousel-outer{ padding:0 56px; } }
   .carousel-track-wrap { overflow:visible; position:relative; width:100%; }
   .carousel-track { 
     display:flex; gap:20px;
     transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); 
-    will-change:transform; 
+    will-change:transform;
+    align-items:center;
   }
+  /* Desktop: slide is fixed 800px, neighbors peek through at lower opacity */
   .carousel-slide { 
-    flex:0 0 100%; min-width:100%;
+    flex:0 0 min(800px, calc(100vw - 120px));
+    width:min(800px, calc(100vw - 120px));
     position:relative; background:transparent;
     border-radius:16px; overflow:visible;
     height:425px;
     display:flex; align-items:center; justify-content:center;
+    opacity:0.35; transform:scale(0.92);
+    transition:opacity 0.5s, transform 0.5s;
   }
-  @media(max-width:768px){ .carousel-slide{ height:auto; aspect-ratio:800/425; } }
+  .carousel-slide.is-active { opacity:1; transform:scale(1); }
+  @media(max-width:768px){
+    .carousel-slide{
+      flex:0 0 100%; width:100%;
+      height:auto; aspect-ratio:800/425;
+      opacity:1; transform:none;
+    }
+  }
   .carousel-slide img {
     max-width:800px; max-height:425px;
-    width:auto; height:100%;
+    width:100%; height:100%;
     object-fit:contain; object-position:center;
     display:block; margin:0 auto;
     border-radius:16px;
@@ -498,38 +509,28 @@
     .carousel-slide img { width:100%; height:auto; max-height:none; }
   }
   .carousel-slide .slide-overlay { position:absolute; top:0; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:800px; background:linear-gradient(to top,rgba(10,22,40,0.4) 0%,transparent 60%); border-radius:16px; pointer-events:none; }
-  .carousel-btn {
-    position:absolute; top:50%; transform:translateY(-50%);
-    width:44px; height:44px; border-radius:50%;
-    background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3);
-    color:white; font-size:18px; cursor:pointer;
+
+  /* Controls row: arrows + dots together under the carousel */
+  .carousel-controls {
     display:flex; align-items:center; justify-content:center;
-    transition:background 0.2s; z-index:10; backdrop-filter:blur(8px);
+    gap:16px; padding:20px 5% 32px; background:var(--navy);
+  }
+  .carousel-btn {
+    width:40px; height:40px; border-radius:50%;
+    background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3);
+    color:white; font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s, border-color 0.2s; backdrop-filter:blur(8px);
+    flex-shrink:0;
   }
   .carousel-btn:hover { background:rgba(13,148,136,0.6); border-color:var(--teal-light); }
-  .carousel-btn.prev { left:-130px; }
-  .carousel-btn.next { right:-130px; }
+  .carousel-dots { display:flex; justify-content:center; align-items:center; gap:8px; }
+  .carousel-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.25); cursor:pointer; transition:all 0.2s; border:none; padding:0; }
+  .carousel-dot.active { background:var(--teal-light); width:24px; border-radius:4px; }
   @media(max-width:768px){
-    .carousel-btn.prev { left:-40px; }
-    .carousel-btn.next { right:-40px; }
+    .carousel-btn { width:36px; height:36px; font-size:15px; }
+    .carousel-controls { gap:12px; padding:16px 5% 28px; }
   }
-  .carousel-dots { display:flex; justify-content:center; gap:8px; padding:18px 5% 32px; background:var(--navy); }
-  .carousel-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.25); cursor:pointer; transition:all 0.2s; border:none; }
-  .carousel-dot.active { background:var(--teal-light); width:24px; border-radius:4px; }
-  .carousel-btn {
-    position:absolute; top:50%; transform:translateY(-50%);
-    width:48px; height:48px; border-radius:50%;
-    background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3);
-    color:white; font-size:20px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    transition:background 0.2s; z-index:10; backdrop-filter:blur(8px);
-  }
-  .carousel-btn:hover { background:rgba(13,148,136,0.6); border-color:var(--teal-light); }
-  .carousel-btn.prev { left:20px; }
-  .carousel-btn.next { right:20px; }
-  .carousel-dots { display:flex; justify-content:center; gap:8px; padding:18px 5% 32px; background:var(--navy); }
-  .carousel-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.25); cursor:pointer; transition:all 0.2s; border:none; }
-  .carousel-dot.active { background:var(--teal-light); width:24px; border-radius:4px; }
 </style>
 </head>
 <body>
@@ -669,17 +670,19 @@
         <div class="slide-overlay"></div>
       </div>
     </div>
-    <button class="carousel-btn prev" onclick="carouselMove(-1)">←</button>
-    <button class="carousel-btn next" onclick="carouselMove(1)">→</button>
   </div>
   </div>
-  <div class="carousel-dots">
-    <button class="carousel-dot active" onclick="carouselGo(0)"></button>
-    <button class="carousel-dot" onclick="carouselGo(1)"></button>
-    <button class="carousel-dot" onclick="carouselGo(2)"></button>
-    <button class="carousel-dot" onclick="carouselGo(3)"></button>
-    <button class="carousel-dot" onclick="carouselGo(4)"></button>
-    <button class="carousel-dot" onclick="carouselGo(5)"></button>
+  <div class="carousel-controls">
+    <button class="carousel-btn prev" onclick="carouselMove(-1)" aria-label="Previous">←</button>
+    <div class="carousel-dots">
+      <button class="carousel-dot active" onclick="carouselGo(0)"></button>
+      <button class="carousel-dot" onclick="carouselGo(1)"></button>
+      <button class="carousel-dot" onclick="carouselGo(2)"></button>
+      <button class="carousel-dot" onclick="carouselGo(3)"></button>
+      <button class="carousel-dot" onclick="carouselGo(4)"></button>
+      <button class="carousel-dot" onclick="carouselGo(5)"></button>
+    </div>
+    <button class="carousel-btn next" onclick="carouselMove(1)" aria-label="Next">→</button>
   </div>
 </div>
 
@@ -729,7 +732,7 @@
     <div class="timeline-header reveal">
       <div>
         <div class="section-label"><span class="lang-en">6-Month Program Timeline</span><span class="lang-zh">六個月計畫時間表</span><span class="lang-cn">六个月计划时间表</span></div>
-        <h2 class="section-title"><span class="lang-en">Junior Explorer<br>Program</span><span class="lang-zh">青年學者<br>探索計畫</span><span class="lang-cn">青年学者<br>探索计划</span></h2>
+        <h2 class="section-title"><span class="lang-en">International Publication<br>Program Description</span><span class="lang-zh">青年學者<br>探索計畫</span><span class="lang-cn">青年学者<br>探索计划</span></h2>
       </div>
       <div style="padding-top:8px">
         <p class="section-desc"><span class="lang-en">Using the DDMTS methodology, each phase builds on the last — guiding students from their very first idea all the way to international conference presentation, with a dedicated 1:1 mentor by their side.</span><span class="lang-zh">採用DDMTS教學架構，每個階段環環相扣，在一對一導師陪伴下，從最初的構想走向國際會議發表。</span><span class="lang-cn">采用DDMTS教学架构，每个阶段环环相扣，在一对一导师陪伴下，从最初的构想走向国际会议发表。</span></p>
@@ -1384,15 +1387,26 @@
     // Real slides start at index 1
 
     function allSlides(){ return track.querySelectorAll('.carousel-slide'); }
+    function isMobile(){ return window.matchMedia('(max-width:768px)').matches; }
     function slideW(){
       const s = allSlides()[0];
       return s ? s.offsetWidth + 20 : 0;
     }
+    function wrapW(){ return wrap ? wrap.offsetWidth : 0; }
     function goTo(idx, animate){
       if(!animate) track.style.transition = 'none';
       else track.style.transition = 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)';
-      // idx 0 = real first slide = position 1 in cloned array
-      track.style.transform = 'translateX(-' + ((idx + 1) * slideW()) + 'px)';
+      // Position the target slide: on desktop center it (so neighbors peek);
+      // on mobile slide fills full width so no centering offset.
+      const sw = slideW();
+      const offset = isMobile() ? 0 : Math.max(0, (wrapW() - (sw - 20)) / 2);
+      track.style.transform = 'translateX(' + (offset - (idx + 1) * sw) + 'px)';
+      updateActiveClass(idx);
+    }
+    function updateActiveClass(idx){
+      // idx 0 = first real slide = position 1 in cloned array
+      const all = allSlides();
+      all.forEach((s,i) => s.classList.toggle('is-active', i === idx + 1));
     }
     function updateDots(){
       document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===cur));
